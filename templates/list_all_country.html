@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task api</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+<body>
+<div class="jumbotron text-center">
+    <h1 class="display-4">Positium task</h1>
+</div>
+<div class="container">
+    <button class="apireq btn btn-primary">Load data</button>
+    <a class="btn btn-success" href="{% url 'gisAPI:country_endpoint' %}">View endpoint</a>
+
+    <div class="row" id="api_data">
+
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+    function create_p_label_span(value1, value2) {
+        let div_card = document.createElement('div');
+        div_card.setAttribute("class", "card");
+        div_card.style.width = "18rem";
+
+        let div_card_body = document.createElement('div');
+        div_card_body.setAttribute("class", "card-body");
+
+        let h5 = document.createElement("h5");
+        h5.setAttribute("id", `country_${value1.type}_${value1.text}`);
+        h5.setAttribute("class", 'card-title');
+        h5.innerHTML = `County name: ${value1.text}`;
+
+        let p = document.createElement("p");
+        p.setAttribute("id", `country_${value2.type}_${value2.text}`);
+        p.setAttribute("class", 'card-text');
+        p.innerHTML = `County code: ${value2.text}`;
+
+        div_card_body.appendChild(h5);
+        div_card_body.appendChild(p);
+        div_card.appendChild(div_card_body);
+        return div_card
+    }
+
+
+    function createMyElement(id1, id2) {
+        let api_div = document.getElementById("api_data");
+        let result_div = document.createElement("div");
+        result_div.setAttribute('class', 'col-md-4 mt-2');
+
+        let p1 = create_p_label_span(id1, id2);
+        result_div.appendChild(p1);
+        api_div.appendChild(result_div);
+
+    }
+
+    $('.apireq').click(function () {
+        $.ajax({
+            url: "http://localhost:8000/api/v1/country/",
+            dataType: "json",
+            success: function (data) {
+                console.log(data)
+                data.forEach(element => createMyElement({"type": "name", "text": element.name}, {
+                    "type": "name",
+                    "text": element.code
+                }))
+            }
+        });
+    });
+
+</script>
+</body>
+</html>
